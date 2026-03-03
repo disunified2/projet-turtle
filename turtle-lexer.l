@@ -13,6 +13,8 @@ DIGIT [0-9]
 
 %%
 
+"forward"             { return KW_FORWARD; }
+
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 
 [\n\t ]*              /* whitespace */
