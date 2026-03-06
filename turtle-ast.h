@@ -66,7 +66,7 @@ struct ast_node {
 
 
 // TODO: make some constructors to use in parser.y
-// for example:
+
 struct ast_node *make_expr_value(double value);
 
 struct ast_node *make_cmd_forward(struct ast_node *expr);
