@@ -24,6 +24,11 @@ void yyerror(struct ast *ret, const char *);
 %token <value>    VALUE       "value"
 %token <name>     NAME        "name"
 
+%token            KW_UP  "up"
+%token            KW_DOWN  "down"
+%token            KW_RIGHT  "right"
+%token            KW_LEFT  "left"
+%token            KW_HEADING  "heading"
 %token            KW_FORWARD  "forward"
 /* TODO: add other tokens */
 
@@ -41,7 +46,12 @@ cmds:
 ;
 
 cmd:
-    KW_FORWARD expr   { $$ = make_cmd_forward($2); }
+    KW_UP expr        { $$ = make_cmd_up($2); }
+  | KW_DOWN expr   { $$ = make_cmd_down($2); }
+  | KW_RIGHT expr   { $$ = make_cmd_right($2); }
+  | KW_LEFT expr   { $$ = make_cmd_left($2); }
+  | KW_HEADING expr   { $$ = make_cmd_heading($2); }
+  | KW_FORWARD expr   { $$ = make_cmd_forward($2); }
 ;
 
 expr:
