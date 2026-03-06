@@ -14,6 +14,14 @@ DIGIT [0-9]
 %%
 
 "forward"             { return KW_FORWARD; }
+"fw"                  { return KW_FORWARD; }
+"backward"            { return KW_BACKWARD; }
+"bw"                  { return KW_BACKWARD; }
+"position"            { return KW_POSITION; }
+"pos"                 { return KW_POSITION; }
+"home"                { return KW_HOME; }
+"color"               { return KW_COLOR; }
+"print"               { return KW_PRINT; }
 
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 

@@ -66,10 +66,21 @@ struct ast_node {
 
 
 // TODO: make some constructors to use in parser.y
-// for example:
+
 struct ast_node *make_expr_value(double value);
 
 struct ast_node *make_cmd_forward(struct ast_node *expr);
+
+struct ast_node *make_cmd_backward(struct ast_node *expr);
+
+struct ast_node *make_cmd_position(struct ast_node *expr1, struct ast_node *expr2);
+
+struct ast_node *make_cmd_home();
+
+struct ast_node *make_cmd_print(struct ast_node *expr);
+
+// Color nodes
+struct ast_node *make_cmd_color(struct ast_node *expr);
 
 
 // root of the abstract syntax tree
