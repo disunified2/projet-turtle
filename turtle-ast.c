@@ -18,6 +18,51 @@ struct ast_node *make_expr_value(double value) {
   return node;
 }
 
+struct ast_node *make_cmd_up(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_UP;
+    node->children_count = 1;
+    node->children[0] = expr;
+    return node;
+}
+
+struct ast_node *make_cmd_down(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_DOWN;
+    node->children_count = 1;
+    node->children[0] = expr;
+    return node;
+}
+
+struct ast_node *make_cmd_right(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_RIGHT;
+    node->children_count = 1;
+    node->children[0] = expr;
+    return node;
+}
+
+struct ast_node *make_cmd_left(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_LEFT;
+    node->children_count = 1;
+    node->children[0] = expr;
+    return node;
+}
+
+struct ast_node *make_cmd_heading(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_HEADING;
+    node->children_count = 1;
+    node->children[0] = expr;
+    return node;
+}
+
 struct ast_node *make_cmd_forward(struct ast_node *expr) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SIMPLE;

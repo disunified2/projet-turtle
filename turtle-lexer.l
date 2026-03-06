@@ -13,6 +13,14 @@ DIGIT [0-9]
 
 %%
 
+"up"                  { return KW_UP; }
+"down"                { return KW_DOWN; }
+"right"               { return KW_RIGHT; }
+"rt"                  { return KW_RIGHT; }
+"left"                { return KW_LEFT; }
+"lt"                  { return KW_LEFT; }
+"heading"             { return KW_HEADING; }
+"hd"                  { return KW_HEADING; }
 "forward"             { return KW_FORWARD; }
 "fw"                  { return KW_FORWARD; }
 "backward"            { return KW_BACKWARD; }
