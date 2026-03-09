@@ -110,7 +110,6 @@ struct ast_node *make_cmd_print(struct ast_node *expr) {
 }
 
 /* Creators for colours */
-
 struct ast_node *make_cmd_color(struct ast_node *expr) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SIMPLE;
@@ -121,9 +120,22 @@ struct ast_node *make_cmd_color(struct ast_node *expr) {
 }
 
 
-void ast_destroy(struct ast *self) {
 
+void ast_node_destroy(struct ast_node *self) {
+    if (self->children_count == 0) {
+        free(self);
+        return;
+    }
+    for (size_t i = 0; i < self->children_count; i++) {
+        ast_node_destroy(self->children[i]);
+    }
 }
+
+void ast_destroy(struct ast *self) {
+    ast_node_destroy(self->unit);
+    free(self);
+}
+// Need to check if destroy actually works correctly with no memory leaks
 
 /*
  * context
