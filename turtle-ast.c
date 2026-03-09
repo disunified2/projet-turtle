@@ -142,7 +142,13 @@ void ast_destroy(struct ast *self) {
  */
 
 void context_create(struct context *self) {
+    self->x = 0;
+    self->y = 0;
+    self->angle = 0;
+    self->up = false;
 
+    // Need to add procedures handling
+    // Need to add variable handling
 }
 
 /*
