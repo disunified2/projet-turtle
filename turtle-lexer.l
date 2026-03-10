@@ -31,8 +31,19 @@ DIGIT [0-9]
 "color"               { return KW_COLOR; }
 "print"               { return KW_PRINT; }
 
+"red"               { return KW_RED; }
+"green"             { return KW_GREEN; }
+"blue"              { return KW_BLUE; }
+"cyan"              { return KW_CYAN; }
+"magenta"           { return KW_MAGENTA; }
+"yellow"            { return KW_YELLOW; }
+"black"             { return KW_BLACK; }
+"gray"              { return KW_GRAY; }
+"white"             { return KW_WHITE; }
+
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 
+"#".*                 /* comment */
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }
 

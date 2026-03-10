@@ -24,10 +24,10 @@ void yyerror(struct ast *ret, const char *);
 %token <value>    VALUE       "value"
 %token <name>     NAME        "name"
 
-%token            KW_UP  "up"
-%token            KW_DOWN  "down"
-%token            KW_RIGHT  "right"
-%token            KW_LEFT  "left"
+%token            KW_UP       "up"
+%token            KW_DOWN     "down"
+%token            KW_RIGHT    "right"
+%token            KW_LEFT     "left"
 %token            KW_HEADING  "heading"
 %token            KW_FORWARD  "forward"
 %token            KW_BACKWARD "backward"
@@ -36,6 +36,16 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_HOME     "home"
 %token            KW_COLOR    "color"
 %token            KW_PRINT    "print"
+
+%token            KW_RED      "red"
+%token            KW_GREEN    "green"
+%token            KW_BLUE     "blue"
+%token            KW_CYAN     "cyan"
+%token            KW_MAGENTA  "magenta"
+%token            KW_YELLOW   "yellow"
+%token            KW_BLACK    "black"
+%token            KW_GRAY     "gray"
+%token            KW_WHITE    "white"
 
 /* TODO: add other tokens */
 
@@ -64,11 +74,24 @@ cmd:
   | KW_HOME                     { $$ = make_cmd_home(); }
   | KW_COLOR expr               { $$ = make_cmd_color($2); } /* Can be subject to change */
   | KW_PRINT expr               { $$ = make_cmd_print($2); }
+  | color
 ;
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
     /* TODO: add identifier */
+;
+
+color:
+    KW_COLOR expr ',' expr ',' expr     { $$ = make_color_rgb($2, $4, $5); }
+  | KW_COLOR KW_RED                     { $$ = make_color_word("red"); }
+  | KW_COLOR KW_GREEN                   { $$ = make_color_word("green"); }
+  | KW_COLOR KW_BLUE                    { $$ = make_color_word("blue"); }
+  | KW_COLOR KW_CYAN                    { $$ = make_color_word("cyan"); }
+  | KW_COLOR KW_MAGENTA                 { $$ = make_color_word("magenta"); }
+  | KW_COLOR KW_YELLOW                  { $$ = make_color_word("yellow"); }
+  | KW_COLOR KW_GRAY                    { $$ = make_color_word("gray"); }
+  | KW_COLOR KW_WHITE                   { $$ = make_color_word("white"); }
 ;
 
 %%
