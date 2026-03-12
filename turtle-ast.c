@@ -15,6 +15,8 @@ struct ast_node *make_expr_value(double value) {
   node->u.value = value;
   node->children_count = 0;
   node->children[0] = NULL;
+  node->next = NULL;
+
   return node;
 }
 
@@ -24,6 +26,8 @@ struct ast_node *make_cmd_up(struct ast_node *expr) {
     node->u.cmd = CMD_UP;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -33,6 +37,8 @@ struct ast_node *make_cmd_down(struct ast_node *expr) {
     node->u.cmd = CMD_DOWN;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -42,6 +48,8 @@ struct ast_node *make_cmd_right(struct ast_node *expr) {
     node->u.cmd = CMD_RIGHT;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -51,6 +59,8 @@ struct ast_node *make_cmd_left(struct ast_node *expr) {
     node->u.cmd = CMD_LEFT;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -60,6 +70,8 @@ struct ast_node *make_cmd_heading(struct ast_node *expr) {
     node->u.cmd = CMD_HEADING;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -69,6 +81,8 @@ struct ast_node *make_cmd_forward(struct ast_node *expr) {
     node->u.cmd = CMD_FORWARD;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -78,6 +92,8 @@ struct ast_node *make_cmd_backward(struct ast_node *expr) {
     node->u.cmd = CMD_BACKWARD;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -88,6 +104,8 @@ struct ast_node *make_cmd_position(struct ast_node *expr1, struct ast_node *expr
     node->children_count = 2;
     node->children[0] = expr1;
     node->children[1] = expr2;
+    node->next = NULL;
+
     return node;
 }
 
@@ -97,6 +115,8 @@ struct ast_node *make_cmd_home() {
     node->u.cmd = CMD_HOME;
     node->children_count = 0;
     node->children[0] = NULL;
+    node->next = NULL;
+
     return node;
 }
 
@@ -106,6 +126,8 @@ struct ast_node *make_cmd_print(struct ast_node *expr) {
     node->u.cmd = CMD_PRINT;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -117,6 +139,8 @@ struct ast_node *make_cmd_color(struct ast_node *expr) {
     node->u.cmd = CMD_COLOR;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
     return node;
 }
 
@@ -128,6 +152,8 @@ struct ast_node *make_color_rgb(struct ast_node *r, struct ast_node *g, struct a
     node->children[0] = r;
     node->children[1] = g;
     node->children[2] = b;
+    node->next = NULL;
+
     return node;
 }
 
@@ -171,16 +197,19 @@ struct ast_node *make_color_word(char* word) {
     red->kind = KIND_EXPR_VALUE;
     red->u.value = r;
     red->children_count = 0;
+    red->next = NULL;
 
     struct ast_node *green = calloc(1, sizeof(struct ast_node));
     green->kind = KIND_EXPR_VALUE;
     green->u.value = g;
     green->children_count = 0;
+    green->next = NULL;
 
     struct ast_node *blue = calloc(1, sizeof(struct ast_node));
     blue->kind = KIND_EXPR_VALUE;
     blue->u.value = b;
     blue->children_count = 0;
+    blue->next = NULL;
 
     return make_color_rgb(red, green, blue);
 }
@@ -199,7 +228,6 @@ void ast_node_destroy(struct ast_node *self) {
 
 void ast_destroy(struct ast *self) {
     ast_node_destroy(self->unit);
-    free(self);
 }
 // Need to check if destroy actually works correctly with no memory leaks
 
@@ -312,6 +340,7 @@ void print_ast_node(const struct ast_node *node, int indent) {
             break;
 
         /* Insert case KIND_EXPR_FUNC here */
+
         default: break;
     }
     printf("\n");
