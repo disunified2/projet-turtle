@@ -110,6 +110,7 @@ struct ast_node *make_cmd_print(struct ast_node *expr) {
 }
 
 /* Creators for colours */
+
 struct ast_node *make_cmd_color(struct ast_node *expr) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SIMPLE;
@@ -117,6 +118,71 @@ struct ast_node *make_cmd_color(struct ast_node *expr) {
     node->children_count = 1;
     node->children[0] = expr;
     return node;
+}
+
+struct ast_node *make_color_rgb(struct ast_node *r, struct ast_node *g, struct ast_node *b) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SIMPLE;
+    node->u.cmd = CMD_COLOR;
+    node->children_count = 3;
+    node->children[0] = r;
+    node->children[1] = g;
+    node->children[2] = b;
+    return node;
+}
+
+struct ast_node *make_color_word(char* word) {
+    double r, g, b;
+    if (strcmp(word, "white") == 0) {
+        r = g = b = 1.0;
+    } else if (strcmp(word, "gray") == 0) {
+        r = g = b = 0.5;
+    } else if (strcmp(word, "red") == 0) {
+        r = 1.0;
+        g = 0.0;
+        b = 0.0;
+    } else if (strcmp(word, "green") == 0) {
+        r = 0.0;
+        g = 1.0;
+        b = 0.0;
+    } else if (strcmp(word, "blue") == 0) {
+        r = 0.0;
+        g = 0.0;
+        b = 1.0;
+    } else if (strcmp(word, "yellow") == 0) {
+        r = 1.0;
+        g = 1.0;
+        b = 0.0;
+    } else if (strcmp(word, "cyan") == 0) {
+        r = 0.0;
+        g = 1.0;
+        b = 1.0;
+    } else if (strcmp(word, "magenta") == 0) {
+        r = 1.0;
+        g = 0.0;
+        b = 1.0;
+    } else {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
+
+    struct ast_node *red = calloc(1, sizeof(struct ast_node));
+    red->kind = KIND_EXPR_VALUE;
+    red->u.value = r;
+    red->children_count = 0;
+
+    struct ast_node *green = calloc(1, sizeof(struct ast_node));
+    green->kind = KIND_EXPR_VALUE;
+    green->u.value = g;
+    green->children_count = 0;
+
+    struct ast_node *blue = calloc(1, sizeof(struct ast_node));
+    blue->kind = KIND_EXPR_VALUE;
+    blue->u.value = b;
+    blue->children_count = 0;
+
+    return make_color_rgb(red, green, blue);
 }
 
 

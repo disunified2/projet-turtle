@@ -49,7 +49,7 @@ void yyerror(struct ast *ret, const char *);
 
 /* TODO: add other tokens */
 
-%type <node> unit cmds cmd expr
+%type <node> unit cmds cmd expr color
 
 %%
 
@@ -83,7 +83,7 @@ expr:
 ;
 
 color:
-    KW_COLOR expr ',' expr ',' expr     { $$ = make_color_rgb($2, $4, $5); }
+    KW_COLOR expr ',' expr ',' expr     { $$ = make_color_rgb($2, $4, $6); }
   | KW_COLOR KW_RED                     { $$ = make_color_word("red"); }
   | KW_COLOR KW_GREEN                   { $$ = make_color_word("green"); }
   | KW_COLOR KW_BLUE                    { $$ = make_color_word("blue"); }
