@@ -92,6 +92,10 @@ struct ast_node *make_cmd_print(struct ast_node *expr);
 // Color nodes
 struct ast_node *make_cmd_color(struct ast_node *expr);
 
+struct ast_node *make_color_rgb(struct ast_node *r, struct ast_node *g, struct ast_node *b);
+
+struct ast_node *make_color_word(char *word);
+
 
 // root of the abstract syntax tree
 struct ast {
