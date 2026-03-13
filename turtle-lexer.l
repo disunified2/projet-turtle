@@ -41,7 +41,11 @@ DIGIT [0-9]
 "gray"              { return KW_GRAY; }
 "white"             { return KW_WHITE; }
 
+"set"               { return KW_SET; }
+
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
+
+[A-Z]+[A-Z0-9]        { yylval.name = strdup(yytext); return NAME; }
 
 "#".*                 /* comment */
 [\n\t ]*              /* whitespace */
