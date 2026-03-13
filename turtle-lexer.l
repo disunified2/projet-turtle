@@ -10,6 +10,8 @@
 %option warn 8bit nodefault noyywrap
 
 DIGIT [0-9]
+LETTER [A-Z]
+WORD [LETTER][LETTER|DIGIT]*
 
 %%
 
@@ -30,6 +32,8 @@ DIGIT [0-9]
 "home"                { return KW_HOME; }
 "color"               { return KW_COLOR; }
 "print"               { return KW_PRINT; }
+"proc"                { return KW_PROC; }
+"call"                { return KW_CALL; }
 
 "red"               { return KW_RED; }
 "green"             { return KW_GREEN; }
@@ -45,6 +49,7 @@ DIGIT [0-9]
 "}"                 { return '}'; }
 
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
+{WORD}                { yylval.name = strdup(yytext); return NAME; }
 
 "#".*                 /* comment */
 [\n\t ]*              /* whitespace */

@@ -9,7 +9,7 @@
 
 #define PI 3.141592653589793
 
-struct ast_node *make_expr_value(double value) {
+struct ast_node *make_expr_value(const double value) {
   struct ast_node *node = calloc(1, sizeof(struct ast_node));
   node->kind = KIND_EXPR_VALUE;
   node->u.value = value;
@@ -18,6 +18,17 @@ struct ast_node *make_expr_value(double value) {
   node->next = NULL;
 
   return node;
+}
+
+struct ast_node *make_expr_name(char* name) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_NAME;
+    node->u.name = name;
+    node->children_count = 0;
+    node->children[0] = NULL;
+    node->next = NULL;
+
+    return node;
 }
 
 struct ast_node *make_cmd_up(struct ast_node *expr) {
@@ -239,7 +250,6 @@ void ast_node_destroy(struct ast_node *self) {
 void ast_destroy(struct ast *self) {
     ast_node_destroy(self->unit);
 }
-// Need to check if destroy actually works correctly with no memory leaks
 
 /*
  * context
@@ -307,7 +317,7 @@ void print_ast_node_cmd(const struct ast_node *node) {
     }
 }
 
-void print_ast_node(const struct ast_node *node, int indent) {
+void print_ast_node(const struct ast_node *node, const int indent) {
     if (node == NULL) {
         return;
     }

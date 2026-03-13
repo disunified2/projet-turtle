@@ -38,6 +38,8 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_PRINT    "print"
 %token            KW_REPEAT   "repeat"
 %token            KW_BLOCK    "block"
+%token            KW_PROC     "proc"
+%token            KW_CALL     "call"
 
 %token            KW_RED      "red"
 %token            KW_GREEN    "green"
@@ -82,6 +84,7 @@ cmd:
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
+    NAME              { $$ = make_expr_name($1); }
     /* TODO: add identifier */
 ;
 
