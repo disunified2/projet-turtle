@@ -10,7 +10,7 @@ int main() {
   srand(time(NULL));
 
   struct ast root;
-  int ret = yyparse(&root);
+  const int ret = yyparse(&root);
 
   if (ret != 0) {
     return ret;
@@ -24,7 +24,7 @@ int main() {
   context_create(&ctx);
 
   ast_eval(&root, &ctx);
-//   ast_print(&root);
+  ast_print(&root);
 
   ast_destroy(&root);
 
