@@ -131,6 +131,16 @@ struct ast_node *make_cmd_print(struct ast_node *expr) {
     return node;
 }
 
+struct ast_node *make_cmd_block(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_BLOCK;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
 /* Creators for colours */
 
 struct ast_node *make_cmd_color(struct ast_node *expr) {
@@ -303,7 +313,7 @@ void print_ast_node(const struct ast_node *node, int indent) {
     }
 
     for (int i = 0; i < indent; i++) {
-        printf(" ");
+        printf("\t");
     }
 
     switch (node->kind) {

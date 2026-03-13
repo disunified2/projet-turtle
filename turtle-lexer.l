@@ -41,6 +41,9 @@ DIGIT [0-9]
 "gray"              { return KW_GRAY; }
 "white"             { return KW_WHITE; }
 
+"{"                 { return '{'; }
+"}"                 { return '}'; }
+
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 
 "#".*                 /* comment */

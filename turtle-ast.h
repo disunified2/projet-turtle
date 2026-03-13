@@ -89,6 +89,8 @@ struct ast_node *make_cmd_home();
 
 struct ast_node *make_cmd_print(struct ast_node *expr);
 
+struct ast_node *make_cmd_block(struct ast_node *expr);
+
 // Color nodes
 struct ast_node *make_cmd_color(struct ast_node *expr);
 
