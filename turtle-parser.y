@@ -37,6 +37,10 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_COLOR    "color"
 %token            KW_PRINT    "print"
 %token            KW_SET      "set"
+%token            KW_REPEAT   "repeat"
+%token            KW_BLOCK    "block"
+%token            KW_PROC     "proc"
+%token            KW_CALL     "call"
 
 %token            KW_RED      "red"
 %token            KW_GREEN    "green"
@@ -50,7 +54,7 @@ void yyerror(struct ast *ret, const char *);
 
 /* TODO: add other tokens */
 
-%type <node> unit cmds cmd expr color
+%type <node> unit cmds cmd expr color block
 
 %%
 
@@ -77,12 +81,17 @@ cmd:
   | KW_PRINT expr               { $$ = make_cmd_print($2); }
   | KW_SET expr expr            { $$ = make_cmd_set($2,$3); }
   | color
+  | block
 ;
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
-    | NAME              { $$ = make_expr_name($1);  }
+  | NAME              { $$ = make_expr_name($1); }
     /* TODO: add identifier */
+;
+
+block:
+    '{' cmds '}'      { $$ = make_cmd_block($2); }
 ;
 
 color:

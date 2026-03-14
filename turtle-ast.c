@@ -9,7 +9,7 @@
 
 #define PI 3.141592653589793
 
-struct ast_node *make_expr_value(double value) {
+struct ast_node *make_expr_value(const double value) {
   struct ast_node *node = calloc(1, sizeof(struct ast_node));
   node->kind = KIND_EXPR_VALUE;
   node->u.value = value;
@@ -149,6 +149,16 @@ struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value) {
     node->u.name = var->u.name;
     node->children[0] = var;
     node->children[1] = value;
+    
+    return node;    
+}
+
+struct ast_node *make_cmd_block(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_BLOCK;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
 
     return node;
 }
@@ -255,7 +265,6 @@ void ast_node_destroy(struct ast_node *self) {
 void ast_destroy(struct ast *self) {
     ast_node_destroy(self->unit);
 }
-// Need to check if destroy actually works correctly with no memory leaks
 
 /*
  * context
@@ -283,55 +292,59 @@ void ast_eval(const struct ast *self, struct context *ctx) {
  * print
  */
 
-void print_ast_node(const struct ast_node *node, int indent) {
+void print_ast_node_cmd(const struct ast_node *node) {
+    switch (node->u.cmd) {
+        case CMD_UP:
+            printf("up");
+            break;
+        case CMD_DOWN:
+            printf("down");
+            break;
+        case CMD_RIGHT:
+            printf("right");
+            break;
+        case CMD_LEFT:
+            printf("left");
+        case CMD_HEADING:
+            printf("heading");
+            break;
+        case CMD_FORWARD:
+            printf("forward");
+            break;
+        case CMD_BACKWARD:
+            printf("backward");
+            break;
+        case CMD_POSITION:
+            printf("position");
+            break;
+        case CMD_HOME:
+            printf("home");
+            break;
+        case CMD_COLOR:
+            printf("color");
+            break;
+        case CMD_PRINT:
+            printf("print");
+            break;
+        default:
+            printf("unknown command");
+            break;
+    }
+}
+
+void print_ast_node(const struct ast_node *node, const int indent) {
     if (node == NULL) {
         return;
     }
 
     for (int i = 0; i < indent; i++) {
-        printf(" ");
+        printf("\t");
     }
 
     switch (node->kind) {
         case KIND_CMD_SIMPLE:
             printf("CMD_SIMPLE: ");
-            switch (node->u.cmd) {
-                case CMD_UP:
-                    printf("up");
-                    break;
-                case CMD_DOWN:
-                    printf("down");
-                    break;
-                case CMD_RIGHT:
-                    printf("right");
-                    break;
-                case CMD_LEFT:
-                    printf("left");
-                case CMD_HEADING:
-                    printf("heading");
-                    break;
-                case CMD_FORWARD:
-                    printf("forward");
-                    break;
-                case CMD_BACKWARD:
-                    printf("backward");
-                    break;
-                case CMD_POSITION:
-                    printf("position");
-                    break;
-                case CMD_HOME:
-                    printf("home");
-                    break;
-                case CMD_COLOR:
-                    printf("color");
-                    break;
-                case CMD_PRINT:
-                    printf("print");
-                    break;
-                default:
-                    printf("unknown command");
-                    break;
-            }
+            print_ast_node_cmd(node);
             break;
         case KIND_CMD_REPEAT:
             printf("repeat:");
