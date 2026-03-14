@@ -45,11 +45,14 @@ WORD [LETTER][LETTER|DIGIT]*
 "gray"              { return KW_GRAY; }
 "white"             { return KW_WHITE; }
 
+"set"               { return KW_SET; }
 "{"                 { return '{'; }
 "}"                 { return '}'; }
 
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 {WORD}                { yylval.name = strdup(yytext); return NAME; }
+
+[A-Z]+[A-Z0-9]        { yylval.name = strdup(yytext); return NAME; }
 
 "#".*                 /* comment */
 [\n\t ]*              /* whitespace */

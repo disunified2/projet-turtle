@@ -100,6 +100,8 @@ struct ast_node *make_color_rgb(struct ast_node *r, struct ast_node *g, struct a
 
 struct ast_node *make_color_word(char *word);
 
+struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value);
+
 
 // root of the abstract syntax tree
 struct ast {

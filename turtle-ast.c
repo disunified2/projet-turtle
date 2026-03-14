@@ -142,6 +142,17 @@ struct ast_node *make_cmd_print(struct ast_node *expr) {
     return node;
 }
 
+struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_SET;
+    node->children_count = 2;
+    node->u.name = var->u.name;
+    node->children[0] = var;
+    node->children[1] = value;
+    
+    return node;    
+}
+
 struct ast_node *make_cmd_block(struct ast_node *expr) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_BLOCK;
@@ -243,6 +254,10 @@ void ast_node_destroy(struct ast_node *self) {
     }
     if (self->next != NULL) {
         ast_node_destroy(self->next);
+    }
+
+    if (self->kind == KIND_EXPR_NAME && self->u.name != NULL) {
+        free( self->u.name);
     }
     free(self);
 }
