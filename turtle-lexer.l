@@ -60,16 +60,14 @@ WORD [LETTER][LETTER|DIGIT]*
 ")"                 { return ')'; }
 ","                 { return ','; }
 
-"-".{DIGIT}+          { yylval.value = strtod(yytext, NULL); return VALUE; }
-{DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
-
 "^"                   { return '^'; }
 "*"                   { return '*'; }
 "/"                   { return '/'; }
 "+"                   { return '+'; }
 "-"                   { return '-'; }
 
-{WORD}                { yylval.name = strdup(yytext); return NAME; }
+-?{DIGIT}+(\.{DIGIT}+)?     { yylval.value = strtod(yytext, NULL); return VALUE; }
+{WORD}                      { yylval.name = strdup(yytext); return NAME; }
 
 [A-Z]+[A-Z0-9]        { yylval.name = strdup(yytext); return NAME; }
 

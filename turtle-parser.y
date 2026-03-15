@@ -58,7 +58,7 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_GRAY     "gray"
 %token            KW_WHITE    "white"
 
-%type <node> unit cmds cmd expr color block
+%type <node> unit cmds cmd expr color internal_func
 
 %%
 
@@ -89,7 +89,6 @@ cmd:
   | KW_REPEAT expr cmds         { $$ = make_cmd_repeat($2, $3); }
   | '{' cmds '}'                { $$ = make_cmd_block($2); }
   | color
-  | block
   | internal_func
 ;
 
