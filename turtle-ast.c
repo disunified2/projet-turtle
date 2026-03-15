@@ -31,23 +31,21 @@ struct ast_node *make_expr_name(char* name) {
     return node;
 }
 
-struct ast_node *make_cmd_up(struct ast_node *expr) {
+struct ast_node *make_cmd_up() {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SIMPLE;
     node->u.cmd = CMD_UP;
-    node->children_count = 1;
-    node->children[0] = expr;
+    node->children_count = 0;
     node->next = NULL;
 
     return node;
 }
 
-struct ast_node *make_cmd_down(struct ast_node *expr) {
+struct ast_node *make_cmd_down() {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SIMPLE;
     node->u.cmd = CMD_DOWN;
-    node->children_count = 1;
-    node->children[0] = expr;
+    node->children_count = 0;
     node->next = NULL;
 
     return node;
@@ -149,6 +147,7 @@ struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value) {
     node->u.name = var->u.name;
     node->children[0] = var;
     node->children[1] = value;
+    node->next = NULL;
     
     return node;    
 }
@@ -158,6 +157,40 @@ struct ast_node *make_cmd_block(struct ast_node *expr) {
     node->kind = KIND_CMD_BLOCK;
     node->children_count = 1;
     node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_cmd_proc(struct ast_node *name, struct ast_node *cmd) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_PROC;
+    node->u.name = name->u.name;
+    node->children_count = 2;
+    node->children[0] = name;
+    node->children[1] = cmd;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_cmd_call(struct ast_node *name) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_CALL;
+    node->u.name = name->u.name;
+    node->children_count = 1;
+    node->children[0] = name;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *cmd) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_CMD_REPEAT;
+    node->children_count = 2;
+    node->children[0] = expr;
+    node->children[1] = cmd;
     node->next = NULL;
 
     return node;
@@ -305,6 +338,7 @@ void print_ast_node_cmd(const struct ast_node *node) {
             break;
         case CMD_LEFT:
             printf("left");
+            break;
         case CMD_HEADING:
             printf("heading");
             break;

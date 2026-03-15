@@ -71,9 +71,9 @@ struct ast_node *make_expr_value(double value);
 
 struct ast_node *make_expr_name(char *name);
 
-struct ast_node *make_cmd_up(struct ast_node *expr);
+struct ast_node *make_cmd_up();
 
-struct ast_node *make_cmd_down(struct ast_node *expr);
+struct ast_node *make_cmd_down();
 
 struct ast_node *make_cmd_right(struct ast_node *expr);
 
@@ -91,7 +91,15 @@ struct ast_node *make_cmd_home();
 
 struct ast_node *make_cmd_print(struct ast_node *expr);
 
-struct ast_node *make_cmd_block(struct ast_node *expr);
+struct ast_node *make_cmd_block(struct ast_node *cmd);
+
+struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value);
+
+struct ast_node *make_cmd_proc(struct ast_node *name, struct ast_node *cmd);
+
+struct ast_node *make_cmd_call(struct ast_node *name);
+
+struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *cmd);
 
 // Color nodes
 struct ast_node *make_cmd_color(struct ast_node *expr);
@@ -99,8 +107,6 @@ struct ast_node *make_cmd_color(struct ast_node *expr);
 struct ast_node *make_color_rgb(struct ast_node *r, struct ast_node *g, struct ast_node *b);
 
 struct ast_node *make_color_word(char *word);
-
-struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value);
 
 
 // root of the abstract syntax tree

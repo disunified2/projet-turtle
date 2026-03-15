@@ -68,8 +68,8 @@ cmds:
 ;
 
 cmd:
-    KW_UP expr                  { $$ = make_cmd_up($2); }
-  | KW_DOWN expr                { $$ = make_cmd_down($2); }
+    KW_UP                       { $$ = make_cmd_up(); }
+  | KW_DOWN                     { $$ = make_cmd_down(); }
   | KW_RIGHT expr               { $$ = make_cmd_right($2); }
   | KW_LEFT expr                { $$ = make_cmd_left($2); }
   | KW_HEADING expr             { $$ = make_cmd_heading($2); }
@@ -80,6 +80,9 @@ cmd:
   | KW_COLOR expr               { $$ = make_cmd_color($2); } /* Can be subject to change */
   | KW_PRINT expr               { $$ = make_cmd_print($2); }
   | KW_SET expr expr            { $$ = make_cmd_set($2,$3); }
+  | KW_PROC expr cmds           { $$ = make_cmd_proc($2, $3); }
+  | KW_CALL expr                { $$ = make_cmd_call($2); }
+  | KW_REPEAT expr cmds         { $$ = make_cmd_repeat($2, $3); }
   | color
   | block
 ;

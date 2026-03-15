@@ -34,6 +34,8 @@ WORD [LETTER][LETTER|DIGIT]*
 "print"               { return KW_PRINT; }
 "proc"                { return KW_PROC; }
 "call"                { return KW_CALL; }
+"set"                 { return KW_SET; }
+"repeat"              { return KW_REPEAT; }
 
 "red"               { return KW_RED; }
 "green"             { return KW_GREEN; }
@@ -45,11 +47,11 @@ WORD [LETTER][LETTER|DIGIT]*
 "gray"              { return KW_GRAY; }
 "white"             { return KW_WHITE; }
 
-"set"               { return KW_SET; }
 "{"                 { return '{'; }
 "}"                 { return '}'; }
+","                 { return ','; }
 
-{DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
+[-]*{DIGIT}+          { yylval.value = strtod(yytext, NULL); return VALUE; }
 {WORD}                { yylval.name = strdup(yytext); return NAME; }
 
 [A-Z]+[A-Z0-9]        { yylval.name = strdup(yytext); return NAME; }
