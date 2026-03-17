@@ -129,6 +129,17 @@ void ast_node_destroy(struct ast_node *self);
 
 void ast_destroy(struct ast *self);
 
+//variable list structure
+struct var_list {
+  struct ast_node **variables;
+  size_t variable_number;
+  size_t capacity;
+};
+
+void var_list_create(struct var_list *self);
+
+void var_list_destroy(struct var_list *self);
+
 // the execution context
 struct context {
   double x;
@@ -137,11 +148,14 @@ struct context {
   bool up;
 
   // TODO: add procedure handling
-  // TODO: add variable handling
+  struct var_list variables;
 };
 
 // create an initial context
 void context_create(struct context *self);
+
+//destroy a context
+void context_destroy(struct context *self);
 
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);

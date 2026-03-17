@@ -370,7 +370,11 @@ void context_create(struct context *self) {
     self->up = false;
 
     // Need to add procedures handling
-    // Need to add variable handling
+    var_list_create(&self->variables);
+}
+
+void context_destroy(struct context *self) {
+    var_list_destroy(&self->variables);
 }
 
 /*
