@@ -42,6 +42,12 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_PROC     "proc"
 %token            KW_CALL     "call"
 
+%token            KW_SIN      "sin"
+%token            KW_COS      "cos"
+%token            KW_TAN      "tan"
+%token            KW_SQRT     "sqrt"
+%token            KW_RANDOM   "random"
+
 %token            KW_RED      "red"
 %token            KW_GREEN    "green"
 %token            KW_BLUE     "blue"
@@ -52,9 +58,7 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_GRAY     "gray"
 %token            KW_WHITE    "white"
 
-/* TODO: add other tokens */
-
-%type <node> unit cmds cmd expr color block
+%type <node> unit cmds cmd expr color internal_func
 
 %%
 
@@ -83,18 +87,22 @@ cmd:
   | KW_PROC expr cmds           { $$ = make_cmd_proc($2, $3); }
   | KW_CALL expr                { $$ = make_cmd_call($2); }
   | KW_REPEAT expr cmds         { $$ = make_cmd_repeat($2, $3); }
+  | '{' cmds '}'                { $$ = make_cmd_block($2); }
   | color
-  | block
+  | internal_func
 ;
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
   | NAME              { $$ = make_expr_name($1); }
-    /* TODO: add identifier */
 ;
 
-block:
-    '{' cmds '}'      { $$ = make_cmd_block($2); }
+internal_func:
+    KW_SIN '(' expr ')'                 { $$ = make_func_sin($3); }
+  | KW_COS '(' expr ')'                 { $$ = make_func_cos($3); }
+  | KW_TAN '(' expr ')'                 { $$ = make_func_tan($3); }
+  | KW_SQRT '(' expr ')'                { $$ = make_func_sqrt($3); }
+  | KW_RANDOM '(' expr ',' expr ')'     { $$ = make_func_random($3, $5); }
 ;
 
 color:

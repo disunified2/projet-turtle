@@ -65,7 +65,6 @@ struct ast_node {
 };
 
 
-// TODO: make some constructors to use in parser.y
 
 struct ast_node *make_expr_value(double value);
 
@@ -100,6 +99,17 @@ struct ast_node *make_cmd_proc(struct ast_node *name, struct ast_node *cmd);
 struct ast_node *make_cmd_call(struct ast_node *name);
 
 struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *cmd);
+
+// Internal functions
+struct ast_node *make_func_sin(struct ast_node *expr);
+
+struct ast_node *make_func_cos(struct ast_node *expr);
+
+struct ast_node *make_func_tan(struct ast_node *expr);
+
+struct ast_node *make_func_sqrt(struct ast_node *expr);
+
+struct ast_node *make_func_random(struct ast_node *expr1, struct ast_node *expr2);
 
 // Color nodes
 struct ast_node *make_cmd_color(struct ast_node *expr);

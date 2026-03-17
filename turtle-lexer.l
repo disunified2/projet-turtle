@@ -28,6 +28,7 @@ WORD [LETTER][LETTER|DIGIT]*
 "backward"            { return KW_BACKWARD; }
 "bw"                  { return KW_BACKWARD; }
 "position"            { return KW_POSITION; }
+
 "pos"                 { return KW_POSITION; }
 "home"                { return KW_HOME; }
 "color"               { return KW_COLOR; }
@@ -36,6 +37,12 @@ WORD [LETTER][LETTER|DIGIT]*
 "call"                { return KW_CALL; }
 "set"                 { return KW_SET; }
 "repeat"              { return KW_REPEAT; }
+
+"sin"                 { return KW_SIN; }
+"cos"                 { return KW_COS; }
+"tan"                 { return KW_TAN; }
+"sqrt"                { return KW_SQRT; }
+"random"              { return KW_RANDOM; }
 
 "red"               { return KW_RED; }
 "green"             { return KW_GREEN; }
@@ -49,10 +56,18 @@ WORD [LETTER][LETTER|DIGIT]*
 
 "{"                 { return '{'; }
 "}"                 { return '}'; }
+"("                 { return '('; }
+")"                 { return ')'; }
 ","                 { return ','; }
 
-[-]*{DIGIT}+          { yylval.value = strtod(yytext, NULL); return VALUE; }
-{WORD}                { yylval.name = strdup(yytext); return NAME; }
+"^"                   { return '^'; }
+"*"                   { return '*'; }
+"/"                   { return '/'; }
+"+"                   { return '+'; }
+"-"                   { return '-'; }
+
+-?{DIGIT}+(\.{DIGIT}+)?     { yylval.value = strtod(yytext, NULL); return VALUE; }
+{WORD}                      { yylval.name = strdup(yytext); return NAME; }
 
 [A-Z]+[A-Z0-9]        { yylval.name = strdup(yytext); return NAME; }
 

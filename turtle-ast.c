@@ -8,6 +8,8 @@
 #include <math.h>
 
 #define PI 3.141592653589793
+#define SQRT2 1.41421356237309504880;
+#define SQRT3 1.7320508075688772935;
 
 struct ast_node *make_expr_value(const double value) {
   struct ast_node *node = calloc(1, sizeof(struct ast_node));
@@ -191,6 +193,64 @@ struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *cmd) {
     node->children_count = 2;
     node->children[0] = expr;
     node->children[1] = cmd;
+    node->next = NULL;
+
+    return node;
+}
+
+/* Creators for internal functions */
+
+struct ast_node *make_func_sin(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_FUNC;
+    node->u.func = FUNC_SIN;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_func_cos(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_FUNC;
+    node->u.func = FUNC_COS;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_func_tan(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_FUNC;
+    node->u.func = FUNC_TAN;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_func_sqrt(struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_FUNC;
+    node->u.func = FUNC_SQRT;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_func_random(struct ast_node *expr1, struct ast_node *expr2) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_FUNC;
+    node->u.func = FUNC_RANDOM;
+    node->children_count = 2;
+    node->children[0] = expr1;
+    node->children[1] = expr2;
     node->next = NULL;
 
     return node;
