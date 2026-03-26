@@ -129,16 +129,18 @@ void ast_node_destroy(struct ast_node *self);
 
 void ast_destroy(struct ast *self);
 
-//variable list structure
-struct var_list {
-  struct ast_node **variables;
-  size_t variable_number;
-  size_t capacity;
+//variable structure
+struct var {
+  char *name;
+  double value;
 };
 
-void var_list_create(struct var_list *self);
-
-void var_list_destroy(struct var_list *self);
+//variable list structure
+struct var_list {
+  struct var *variables;
+  size_t size;
+  size_t capacity;
+};
 
 // the execution context
 struct context {
@@ -148,8 +150,17 @@ struct context {
   bool up;
 
   // TODO: add procedure handling
-  struct var_list variables;
+  struct var_list variable_list;
 };
+
+// create a variable list
+void var_list_create(struct var_list *self);
+
+//destroy a variable_list
+void var_list_destroy(struct var_list *self);
+
+// add a variable to the list
+void add_variable(struct context *ctx, char *name, double value);
 
 // create an initial context
 void context_create(struct context *self);

@@ -25,7 +25,7 @@ struct ast_node *make_expr_value(const double value) {
 struct ast_node *make_expr_name(char* name) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_EXPR_NAME;
-    node->u.name = name;
+    node->u.name = strdup(name);
     node->children_count = 0;
     node->children[0] = NULL;
     node->next = NULL;
@@ -146,7 +146,7 @@ struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SET;
     node->children_count = 2;
-    node->u.name = var->u.name;
+    node->u.name = strdup(var->u.name); // c'est peut-etre pas utile ça
     node->children[0] = var;
     node->children[1] = value;
     node->next = NULL;
@@ -360,6 +360,44 @@ void ast_destroy(struct ast *self) {
 }
 
 /*
+ * var_list
+ */
+
+void var_list_create(struct var_list *self) {
+    self->capacity = 10;
+    self->size = 0;
+    self->variables = calloc(self->capacity, sizeof(struct var));
+}
+
+void var_list_destroy(struct var_list *self) {
+    for (size_t i = 0; i < self->size; i++) {
+        free(self->variables[i].name);
+    }
+
+    free(self->variables);
+}
+
+void add_variable(struct context *ctx, char *name, double value) {
+    for (size_t i = 0; i < ctx->variable_list.size; i++) {
+        if (strcmp(ctx->variable_list.variables[i].name,name) == 0) {
+            ctx->variable_list.variables[i].value = value;
+            return;
+        }
+    }
+    //var_list pleine
+    if (ctx->variable_list.size == ctx->variable_list.capacity) {
+        ctx->variable_list.capacity += 10;
+        ctx->variable_list.variables = realloc(ctx->variable_list.variables,ctx->variable_list.capacity * sizeof(struct var));
+    }
+    struct var var;
+    var.name = strdup(name);
+    var.value = value;
+
+    ctx->variable_list.variables[ctx->variable_list.size] = var;
+    ctx->variable_list.size++;
+}
+
+/*
  * context
  */
 
@@ -370,11 +408,11 @@ void context_create(struct context *self) {
     self->up = false;
 
     // Need to add procedures handling
-    var_list_create(&self->variables);
+    var_list_create(&self->variable_list);
 }
 
 void context_destroy(struct context *self) {
-    var_list_destroy(&self->variables);
+    var_list_destroy(&self->variable_list);
 }
 
 /*
