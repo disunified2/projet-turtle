@@ -143,6 +143,8 @@ struct context {
 // create an initial context
 void context_create(struct context *self);
 
+void ast_print_node(const struct ast_node *node, int indent);
+
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);
 

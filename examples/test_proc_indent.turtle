@@ -1,0 +1,6 @@
+proc CRENEL {
+    right 90 fw 10
+    right 90 fw 20
+    left 90 fw 10
+    left 90 fw 20
+}
