@@ -129,6 +129,18 @@ void ast_node_destroy(struct ast_node *self);
 
 void ast_destroy(struct ast *self);
 
+struct proc {
+  int nb_reps;
+  int nb_blocks;
+  struct ast_node **instructions;
+};
+
+struct proc_list {
+  struct proc *procs;
+  size_t size;
+  size_t capacity;
+};
+
 //variable structure
 struct var {
   char *name;
@@ -149,9 +161,18 @@ struct context {
   double angle;
   bool up;
 
-  // TODO: add procedure handling
+  struct proc_list proc_list;
   struct var_list variable_list;
 };
+
+// create a procedure list
+void proc_list_create(struct proc_list *self);
+
+//destroy a procedure_list
+void proc_list_destroy(struct proc_list *self);
+
+// add a procedure to the list
+void add_procedure(struct context *ctx/*, procedure*/);
 
 // create a variable list
 void var_list_create(struct var_list *self);

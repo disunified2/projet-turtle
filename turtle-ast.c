@@ -360,6 +360,26 @@ void ast_destroy(struct ast *self) {
 }
 
 /*
+ * proc_list
+ */
+
+
+// create a procedure list
+void proc_list_create(struct proc_list *self) {
+
+}
+
+//destroy a procedure_list
+void proc_list_destroy(struct proc_list *self) {
+
+}
+
+// add a procedure to the list
+void add_procedure(struct context *ctx/*, procedure*/) {
+
+}
+
+/*
  * var_list
  */
 
