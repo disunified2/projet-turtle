@@ -256,6 +256,32 @@ struct ast_node *make_func_random(struct ast_node *expr1, struct ast_node *expr2
     return node;
 }
 
+/* Creators for arithmetic operators */
+
+struct ast_node *make_expr_binop(const char operator, struct ast_node *expr1, struct ast_node *expr2) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+
+    node->kind = KIND_EXPR_BINOP;
+    node->u.op = operator;
+    node->children_count = 2;
+    node->children[0] = expr1;
+    node->children[1] = expr2;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_expr_unop(const char operator, struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_UNOP;
+    node->u.op = operator;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
 /* Creators for colours */
 
 struct ast_node *make_cmd_color(struct ast_node *expr) {
@@ -426,6 +452,29 @@ void print_ast_node_cmd(const struct ast_node *node) {
     }
 }
 
+void print_ast_node_func(const struct ast_node *node) {
+    switch (node->u.func) {
+        case FUNC_COS:
+            printf("cos ");
+            break;
+        case FUNC_SIN:
+            printf("sin ");
+            break;
+        case FUNC_TAN:
+            printf("tan ");
+            break;
+        case FUNC_SQRT:
+            printf("sqrt ");
+            break;
+        case FUNC_RANDOM:
+            printf("random ");
+            break;
+        default:
+            printf("unknown function ");
+            break;
+    }
+}
+
 void print_ast_node(const struct ast_node *node, int indent) {
     if (node == NULL) { return; }
 
@@ -442,7 +491,7 @@ void print_ast_node(const struct ast_node *node, int indent) {
             break;
         case KIND_CMD_BLOCK:
             printf("{\n");
-            indent++;
+            // indent++;
             break;
         case KIND_CMD_PROC:
             printf("proc ");
@@ -466,6 +515,10 @@ void print_ast_node(const struct ast_node *node, int indent) {
             break;
         case KIND_EXPR_NAME:
             printf("%s ", node->u.name);
+            break;
+
+        case KIND_EXPR_FUNC:
+            print_ast_node_func(node);
             break;
 
         default: break;
