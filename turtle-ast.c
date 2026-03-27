@@ -400,14 +400,6 @@ void context_create(struct context *self) {
 }
 
 /*
- * eval
- */
-
-void ast_eval(const struct ast *self, struct context *ctx) {
-
-}
-
-/*
  * print
  */
 
@@ -540,4 +532,74 @@ void print_ast_node(const struct ast_node *node, int indent) {
 
 void ast_print(const struct ast *self) {
     print_ast_node(self->unit, 0);
+}
+
+/* Tree evaluation */
+
+void ast_node_eval_cmd_simple(const struct ast_node *node, struct context *ctx) {
+
+}
+
+void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx) {
+    while (node != NULL) {
+        switch (node->kind) {
+            case KIND_CMD_SIMPLE:
+                ast_node_eval_cmd_simple(node, ctx);
+                break;
+            case KIND_CMD_REPEAT: {
+                const int repeat = (int)floor(ast_node_eval_expr(node->children[0], ctx));
+                for (int i = 0; i < repeat; i++) {
+                    ast_node_eval_cmd(node->children[1], ctx);
+                }
+                break;
+            }
+            case KIND_CMD_BLOCK:
+                ast_node_eval_cmd(node->children[0], ctx);
+                break;
+            case KIND_CMD_PROC:
+                // ast_node_list_append(&ctx->proc_list, node);
+                break;
+            case KIND_CMD_CALL: {
+                // const struct ast_node *proc = get_procedure(node->children[0], ctx);
+                // if (proc != NULL) {
+                //     ast_node_eval_cmd(proc, ctx);
+                // }
+                break;
+            }
+            case KIND_CMD_SET: {
+                // const double value = ast_node_eval_expr(node->children[1], ctx);
+                // struct ast_node *value_node = make_expr_value(value);
+                // struct ast_node *node = get_variable(node->children[0], ctx);
+                // if (node == NULL) {
+                //     ast_node_list_append(&ctx->variable_list, value_node);
+                // } else {
+                //     node->children[1] = value_node;
+                // }
+                break;
+            }
+
+            // Expression commands
+            case KIND_EXPR_FUNC:
+            case KIND_EXPR_VALUE:
+            case KIND_EXPR_UNOP:
+            case KIND_EXPR_BINOP:
+            case KIND_EXPR_BLOCK:
+            case KIND_EXPR_NAME:
+                ast_node_eval_expr(node, ctx);
+
+            default:
+                break;
+        }
+
+        node = node->next;
+    }
+}
+
+double ast_node_eval_expr(const struct ast_node *node, struct context *ctx) {
+
+    return 0;
+}
+
+void ast_eval(const struct ast *self, struct context *ctx) {
+    ast_node_eval_cmd(self->unit, ctx);
 }
