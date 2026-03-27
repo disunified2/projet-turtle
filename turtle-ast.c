@@ -452,6 +452,29 @@ void print_ast_node_cmd(const struct ast_node *node) {
     }
 }
 
+void print_ast_node_func(const struct ast_node *node) {
+    switch (node->u.func) {
+        case FUNC_COS:
+            printf("cos ");
+            break;
+        case FUNC_SIN:
+            printf("sin ");
+            break;
+        case FUNC_TAN:
+            printf("tan ");
+            break;
+        case FUNC_SQRT:
+            printf("sqrt ");
+            break;
+        case FUNC_RANDOM:
+            printf("random ");
+            break;
+        default:
+            printf("unknown function ");
+            break;
+    }
+}
+
 void print_ast_node(const struct ast_node *node, int indent) {
     if (node == NULL) { return; }
 
@@ -468,7 +491,7 @@ void print_ast_node(const struct ast_node *node, int indent) {
             break;
         case KIND_CMD_BLOCK:
             printf("{\n");
-            indent++;
+            // indent++;
             break;
         case KIND_CMD_PROC:
             printf("proc ");
@@ -492,6 +515,10 @@ void print_ast_node(const struct ast_node *node, int indent) {
             break;
         case KIND_EXPR_NAME:
             printf("%s ", node->u.name);
+            break;
+
+        case KIND_EXPR_FUNC:
+            print_ast_node_func(node);
             break;
 
         default: break;
