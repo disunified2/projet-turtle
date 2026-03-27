@@ -58,6 +58,11 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_GRAY     "gray"
 %token            KW_WHITE    "white"
 
+%left '+' '-'
+%left '*' '/'
+%right '^'
+%right UNOP
+
 %type <node> unit cmds cmd expr color internal_func
 
 %%
@@ -93,13 +98,14 @@ cmd:
 ;
 
 expr:
-    VALUE             { $$ = make_expr_value($1); }
-  | NAME              { $$ = make_expr_name($1); }
-  | expr '+' expr     { $$ = make_expr_binop('+', $1, $3); }
-  | expr '-' expr     { $$ = make_expr_binop('-', $1; $3); }
-  | expr '*' expr     { $$ = make_expr_binop('*', $1, $3); }
-  | expr '/' expr     { $$ = make_expr_binop('/', $1, $3); }
-  | expr '^' expr     { $$ = make_expr_binop('^', $1, $3); }
+    VALUE               { $$ = make_expr_value($1); }
+  | NAME                { $$ = make_expr_name($1); }
+  | expr '+' expr       { $$ = make_expr_binop('+', $1, $3); }
+  | expr '-' expr       { $$ = make_expr_binop('-', $1; $3); }
+  | expr '*' expr       { $$ = make_expr_binop('*', $1, $3); }
+  | expr '/' expr       { $$ = make_expr_binop('/', $1, $3); }
+  | expr '^' expr       { $$ = make_expr_binop('^', $1, $3); }
+  | '-' expr %prec UNOP { $$ = make_expr_unop('-', $2); }
 ;
 
 internal_func:
