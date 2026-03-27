@@ -25,7 +25,7 @@ struct ast_node *make_expr_value(const double value) {
 struct ast_node *make_expr_name(char* name) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_EXPR_NAME;
-    node->u.name = name;
+    node->u.name = strdup(name);
     node->children_count = 0;
     node->children[0] = NULL;
     node->next = NULL;
@@ -146,7 +146,7 @@ struct ast_node *make_cmd_set(struct ast_node *var, struct ast_node *value) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_CMD_SET;
     node->children_count = 2;
-    node->u.name = var->u.name;
+    node->u.name = strdup(var->u.name); // c'est peut-etre pas utile ça
     node->children[0] = var;
     node->children[1] = value;
     node->next = NULL;
@@ -386,17 +386,71 @@ void ast_destroy(struct ast *self) {
 }
 
 /*
+ * ast_node_list
+ */
+
+//ast_node_list creation
+void create_ast_node_list(struct ast_node_list *self) {
+    self->capacity = 10;
+    self->size = 0;
+    self->nodes = malloc(self->capacity * sizeof(struct ast_node *));
+}
+
+//ast_node_list destruction
+void destroy_ast_node_list(struct ast_node_list *self) {
+    free(self->nodes);
+}
+
+//ast_node_list addition
+void ast_node_list_append(struct ast_node_list *self, struct ast_node *node) {
+    for (size_t i = 0; i < self->size; i++) {
+        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
+            self->nodes[i] = node;
+            return;
+        }
+    }
+
+    //full capacity
+    if (self->size == self->capacity-1) {
+        self->capacity += 10;
+        self->nodes = realloc(self->nodes,self->capacity * sizeof(struct ast_node *));
+    }
+
+    self->nodes[self->size] = node;
+    self->size++;
+}
+
+//ast_node_list obtaining
+struct ast_node *ast_node_list_get(struct ast_node_list *self, struct ast_node *node) {
+    for (size_t i = 0; i < self->size; i++) {
+        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
+            return self->nodes[i];
+        }
+    }
+
+    return NULL;
+}
+
+/*
  * context
  */
 
+//context creation
 void context_create(struct context *self) {
     self->x = 0;
     self->y = 0;
     self->angle = 0;
     self->up = false;
 
-    // Need to add procedures handling
-    // Need to add variable handling
+    //procedure and variable handling
+    create_ast_node_list(&self->variable_list);
+    create_ast_node_list(&self->proc_list);
+}
+
+//context destruction
+void context_destroy(struct context *self) {
+    destroy_ast_node_list(&self->variable_list);
+    destroy_ast_node_list(&self->proc_list);
 }
 
 /*

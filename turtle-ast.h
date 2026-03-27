@@ -134,6 +134,20 @@ void ast_node_destroy(struct ast_node *self);
 
 void ast_destroy(struct ast *self);
 
+struct ast_node_list {
+  struct ast_node **nodes;
+  size_t size;
+  size_t capacity;
+};
+
+void create_ast_node_list(struct ast_node_list *self);
+
+void destroy_ast_node_list(struct ast_node_list *self);
+
+void ast_node_list_append(struct ast_node_list *self, struct ast_node *node);
+
+struct ast_node *ast_node_list_get(struct ast_node_list *self, struct ast_node *node);
+
 // the execution context
 struct context {
   double x;
@@ -141,12 +155,17 @@ struct context {
   double angle;
   bool up;
 
-  // TODO: add procedure handling
-  // TODO: add variable handling
+  struct ast_node_list proc_list;
+  struct ast_node_list variable_list;
 };
+
+
 
 // create an initial context
 void context_create(struct context *self);
+
+//destroy a context
+void context_destroy(struct context *self);
 
 void ast_print_node(const struct ast_node *node, int indent);
 
