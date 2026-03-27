@@ -672,7 +672,7 @@ void ast_node_eval_cmd_simple(const struct ast_node *node, struct context *ctx) 
     }
 }
 
-void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx) {
+void ast_node_eval_cmd(struct ast_node *node, struct context *ctx) {
     while (node != NULL) {
         switch (node->kind) {
             case KIND_CMD_SIMPLE:
@@ -689,24 +689,24 @@ void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx) {
                 ast_node_eval_cmd(node->children[0], ctx);
                 break;
             case KIND_CMD_PROC:
-                // ast_node_list_append(&ctx->proc_list, node);
+                ast_node_list_append(&ctx->proc_list, node);
                 break;
             case KIND_CMD_CALL: {
-                // const struct ast_node *proc = get_procedure(node->children[0], ctx);
-                // if (proc != NULL) {
-                //     ast_node_eval_cmd(proc, ctx);
-                // }
+                struct ast_node *proc = ast_node_list_get(&ctx->proc_list, node->children[0]);
+                if (proc != NULL) {
+                    ast_node_eval_cmd(proc, ctx);
+                }
                 break;
             }
             case KIND_CMD_SET: {
-                // const double value = ast_node_eval_expr(node->children[1], ctx);
-                // struct ast_node *value_node = make_expr_value(value);
-                // struct ast_node *node = get_variable(node->children[0], ctx);
-                // if (node == NULL) {
-                //     ast_node_list_append(&ctx->variable_list, value_node);
-                // } else {
-                //     node->children[1] = value_node;
-                // }
+                const double value = ast_node_eval_expr(node->children[1], ctx);
+                struct ast_node *value_node = make_expr_value(value);
+                const struct ast_node *node_ = ast_node_list_get(&ctx->variable_list, node->children[0]);
+                if (node_ == NULL) {
+                    ast_node_list_append(&ctx->variable_list, value_node);
+                } else {
+                    node->children[1] = value_node;
+                }
                 break;
             }
 
@@ -784,10 +784,10 @@ double ast_node_eval_expr(const struct ast_node *node, struct context *ctx) {
         case KIND_EXPR_VALUE:
             return node->u.value;
         case KIND_EXPR_NAME: {
-            // const struct ast_node *var = get_variable(node, ctx);
-            // if (var != NULL) {
-            //     ast_node_eval_expr(var->children[0], ctx);
-            // }
+            const struct ast_node *var = ast_node_list_get(&ctx->variable_list, node->children[0]);
+            if (var != NULL) {
+                ast_node_eval_expr(var->children[0], ctx);
+            }
             break;
         }
         case KIND_EXPR_BINOP:
