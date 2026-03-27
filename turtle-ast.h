@@ -129,30 +129,19 @@ void ast_node_destroy(struct ast_node *self);
 
 void ast_destroy(struct ast *self);
 
-struct proc {
-  int nb_reps;
-  int nb_blocks;
-  struct ast_node **instructions;
-};
-
-struct proc_list {
-  struct proc *procs;
+struct ast_node_list {
+  struct ast_node **nodes;
   size_t size;
   size_t capacity;
 };
 
-//variable structure
-struct var {
-  char *name;
-  double value;
-};
+void create_ast_node_list(struct ast_node_list *self);
 
-//variable list structure
-struct var_list {
-  struct var *variables;
-  size_t size;
-  size_t capacity;
-};
+void destroy_ast_node_list(struct ast_node_list *self);
+
+void ast_node_list_append(struct ast_node_list *self, struct ast_node *node);
+
+struct ast_node *ast_node_list_get(struct ast_node_list *self, struct ast_node *node);
 
 // the execution context
 struct context {
@@ -161,27 +150,11 @@ struct context {
   double angle;
   bool up;
 
-  struct proc_list proc_list;
-  struct var_list variable_list;
+  struct ast_node_list proc_list;
+  struct ast_node_list variable_list;
 };
 
-// create a procedure list
-void proc_list_create(struct proc_list *self);
 
-//destroy a procedure_list
-void proc_list_destroy(struct proc_list *self);
-
-// add a procedure to the list
-void add_procedure(struct context *ctx/*, procedure*/);
-
-// create a variable list
-void var_list_create(struct var_list *self);
-
-//destroy a variable_list
-void var_list_destroy(struct var_list *self);
-
-// add a variable to the list
-void add_variable(struct context *ctx, char *name, double value);
 
 // create an initial context
 void context_create(struct context *self);

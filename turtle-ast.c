@@ -360,79 +360,71 @@ void ast_destroy(struct ast *self) {
 }
 
 /*
- * proc_list
+ * ast_node_list
  */
 
-
-// create a procedure list
-void proc_list_create(struct proc_list *self) {
-
-}
-
-//destroy a procedure_list
-void proc_list_destroy(struct proc_list *self) {
-
-}
-
-// add a procedure to the list
-void add_procedure(struct context *ctx/*, procedure*/) {
-
-}
-
-/*
- * var_list
- */
-
-void var_list_create(struct var_list *self) {
+//ast_node_list creation
+void create_ast_node_list(struct ast_node_list *self) {
     self->capacity = 10;
     self->size = 0;
-    self->variables = calloc(self->capacity, sizeof(struct var));
+    self->nodes = malloc(self->capacity * sizeof(struct ast_node *));
 }
 
-void var_list_destroy(struct var_list *self) {
+//ast_node_list destruction
+void destroy_ast_node_list(struct ast_node_list *self) {
+    free(self->nodes);
+}
+
+//ast_node_list addition
+void ast_node_list_append(struct ast_node_list *self, struct ast_node *node) {
     for (size_t i = 0; i < self->size; i++) {
-        free(self->variables[i].name);
-    }
-
-    free(self->variables);
-}
-
-void add_variable(struct context *ctx, char *name, double value) {
-    for (size_t i = 0; i < ctx->variable_list.size; i++) {
-        if (strcmp(ctx->variable_list.variables[i].name,name) == 0) {
-            ctx->variable_list.variables[i].value = value;
+        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
+            self->nodes[i] = node;
             return;
         }
     }
-    //var_list pleine
-    if (ctx->variable_list.size == ctx->variable_list.capacity) {
-        ctx->variable_list.capacity += 10;
-        ctx->variable_list.variables = realloc(ctx->variable_list.variables,ctx->variable_list.capacity * sizeof(struct var));
-    }
-    struct var var;
-    var.name = strdup(name);
-    var.value = value;
 
-    ctx->variable_list.variables[ctx->variable_list.size] = var;
-    ctx->variable_list.size++;
+    //full capacity
+    if (self->size == self->capacity-1) {
+        self->capacity += 10;
+        self->nodes = realloc(self->nodes,self->capacity * sizeof(struct ast_node *));
+    }
+
+    self->nodes[self->size] = node;
+    self->size++;
+}
+
+//ast_node_list obtaining
+struct ast_node *ast_node_list_get(struct ast_node_list *self, struct ast_node *node) {
+    for (size_t i = 0; i < self->size; i++) {
+        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
+            return self->nodes[i];
+        }
+    }
+
+    return NULL;
 }
 
 /*
  * context
  */
 
+//context creation
 void context_create(struct context *self) {
     self->x = 0;
     self->y = 0;
     self->angle = 0;
     self->up = false;
 
-    // Need to add procedures handling
-    var_list_create(&self->variable_list);
+    //procedure and variable handling
+    create_ast_node_list(&self->variable_list);
+    create_ast_node_list(&self->proc_list);
 }
 
+//context destruction
 void context_destroy(struct context *self) {
-    var_list_destroy(&self->variable_list);
+    destroy_ast_node_list(&self->variable_list);
+    destroy_ast_node_list(&self->proc_list);
 }
 
 /*
