@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #define PI 3.141592653589793
 #define SQRT2 1.41421356237309504880;
@@ -454,14 +455,6 @@ void context_destroy(struct context *self) {
 }
 
 /*
- * eval
- */
-
-void ast_eval(const struct ast *self, struct context *ctx) {
-
-}
-
-/*
  * print
  */
 
@@ -594,4 +587,223 @@ void print_ast_node(const struct ast_node *node, int indent) {
 
 void ast_print(const struct ast *self) {
     print_ast_node(self->unit, 0);
+}
+
+/* Tree evaluation */
+
+void move_to(struct context *ctx, double x, double y) {
+    ctx->x = x;
+    ctx->y = y;
+}
+
+double deg_to_rad(const double degrees) {
+    return degrees * PI / 180;
+}
+
+void ast_node_eval_cmd_simple(const struct ast_node *node, struct context *ctx) {
+    switch (node->u.cmd) {
+        case CMD_UP:
+            ctx->up = true;
+            break;
+        case CMD_DOWN:
+            ctx->up = false;
+            break;
+        case CMD_RIGHT: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            ctx->angle += angle;
+            break;
+        }
+        case CMD_LEFT: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            ctx->angle -= angle;
+            break;
+        }
+        case CMD_HEADING: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            ctx->angle = angle;
+            break;
+        }
+        case CMD_FORWARD: {
+            const double distance = ast_node_eval_expr(node->children[0], ctx);
+            const double angle = deg_to_rad(ctx->angle);
+            const double new_x = ctx->x + distance * sin(angle);
+            const double new_y = ctx->y - distance * cos(angle);
+            move_to(ctx, new_x, new_y);
+            break;
+        }
+        case CMD_BACKWARD: {
+            const double distance = ast_node_eval_expr(node->children[0], ctx);
+            const double angle = deg_to_rad(ctx->angle);
+            const double new_x = ctx->x - distance * sin(angle);
+            const double new_y = ctx->y + distance * cos(angle);
+            move_to(ctx, new_x, new_y);
+            break;
+        }
+        case CMD_POSITION: {
+            const bool up = ctx->up;
+            ctx->up = true;
+            const double new_x = ast_node_eval_expr(node->children[0], ctx);
+            const double new_y = ast_node_eval_expr(node->children[1], ctx);
+            move_to(ctx, new_x, new_y);
+            ctx->up = up;
+            break;
+        }
+        case CMD_HOME: {
+            move_to(ctx, 0, 0);
+            ctx->angle = 0;
+            break;
+        }
+        case CMD_COLOR: {
+            const double r = ast_node_eval_expr(node->children[0], ctx);
+            const double g = ast_node_eval_expr(node->children[1], ctx);
+            const double b = ast_node_eval_expr(node->children[2], ctx);
+            ctx->color[0] = r;
+            ctx->color[1] = g;
+            ctx->color[2] = b;
+            break;
+        }
+        case CMD_PRINT: {
+            const double val = ast_node_eval_expr(node->children[0], ctx);
+            fprintf(stderr, "print => %f\n", val);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx) {
+    while (node != NULL) {
+        switch (node->kind) {
+            case KIND_CMD_SIMPLE:
+                ast_node_eval_cmd_simple(node, ctx);
+                break;
+            case KIND_CMD_REPEAT: {
+                const int repeat = (int)floor(ast_node_eval_expr(node->children[0], ctx));
+                for (int i = 0; i < repeat; i++) {
+                    ast_node_eval_cmd(node->children[1], ctx);
+                }
+                break;
+            }
+            case KIND_CMD_BLOCK:
+                ast_node_eval_cmd(node->children[0], ctx);
+                break;
+            case KIND_CMD_PROC:
+                // ast_node_list_append(&ctx->proc_list, node);
+                break;
+            case KIND_CMD_CALL: {
+                // const struct ast_node *proc = get_procedure(node->children[0], ctx);
+                // if (proc != NULL) {
+                //     ast_node_eval_cmd(proc, ctx);
+                // }
+                break;
+            }
+            case KIND_CMD_SET: {
+                // const double value = ast_node_eval_expr(node->children[1], ctx);
+                // struct ast_node *value_node = make_expr_value(value);
+                // struct ast_node *node = get_variable(node->children[0], ctx);
+                // if (node == NULL) {
+                //     ast_node_list_append(&ctx->variable_list, value_node);
+                // } else {
+                //     node->children[1] = value_node;
+                // }
+                break;
+            }
+
+            // Expression commands
+            case KIND_EXPR_FUNC:
+            case KIND_EXPR_VALUE:
+            case KIND_EXPR_UNOP:
+            case KIND_EXPR_BINOP:
+            case KIND_EXPR_BLOCK:
+            case KIND_EXPR_NAME:
+                ast_node_eval_expr(node, ctx);
+
+            default:
+                break;
+        }
+
+        node = node->next;
+    }
+}
+
+double ast_node_eval_expr_binop(const struct ast_node *node, struct context *ctx) {
+    const double left = ast_node_eval_expr(node->children[0], ctx);
+    const double right = ast_node_eval_expr(node->children[1], ctx);
+    switch (node->u.op) {
+        case '+':
+            return left + right;
+        case '-':
+            return left - right;
+        case '*':
+            return left * right;
+        case '/':
+            if (right != 0) {
+                return left / right;
+            }
+            break;
+        case '^':
+            return pow(left, right);
+        default:
+            break;
+    }
+    return 0;
+}
+
+double ast_node_eval_expr_func(const struct ast_node *node, struct context *ctx) {
+    switch (node->u.func) {
+        case FUNC_COS: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return cos(deg_to_rad(angle));
+        }
+        case FUNC_SIN: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return sin(deg_to_rad(angle));
+        }
+        case FUNC_TAN: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return tan(deg_to_rad(angle));
+        }
+        case FUNC_SQRT: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return sqrt(deg_to_rad(angle));
+        }
+        case FUNC_RANDOM: {
+            const double min = ast_node_eval_expr(node->children[0], ctx);
+            const double max = ast_node_eval_expr(node->children[1], ctx);
+            if (min <= max) {
+                return min + (double)rand() / RAND_MAX * (max - min);
+            }
+        }
+    }
+    return 0;
+}
+
+double ast_node_eval_expr(const struct ast_node *node, struct context *ctx) {
+    switch (node->kind) {
+        case KIND_EXPR_VALUE:
+            return node->u.value;
+        case KIND_EXPR_NAME: {
+            // const struct ast_node *var = get_variable(node, ctx);
+            // if (var != NULL) {
+            //     ast_node_eval_expr(var->children[0], ctx);
+            // }
+            break;
+        }
+        case KIND_EXPR_BINOP:
+            return ast_node_eval_expr_binop(node, ctx);
+        case KIND_EXPR_UNOP: {
+            const double val = ast_node_eval_expr(node->children[0], ctx);
+            return -val;
+        }
+        case KIND_EXPR_FUNC:
+            return ast_node_eval_expr_func(node, ctx);
+        default:
+            break;
+    }
+    return 0;
+}
+
+void ast_eval(const struct ast *self, struct context *ctx) {
+    ast_node_eval_cmd(self->unit, ctx);
 }

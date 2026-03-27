@@ -154,6 +154,7 @@ struct context {
   double y;
   double angle;
   bool up;
+  double color[3];
 
   struct ast_node_list proc_list;
   struct ast_node_list variable_list;
@@ -171,6 +172,10 @@ void ast_print_node(const struct ast_node *node, int indent);
 
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);
+
+void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx);
+
+double ast_node_eval_expr(const struct ast_node *node, struct context *ctx);
 
 // evaluate the tree and generate some basic primitives
 void ast_eval(const struct ast *self, struct context *ctx);
