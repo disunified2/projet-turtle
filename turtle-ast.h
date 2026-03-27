@@ -111,6 +111,11 @@ struct ast_node *make_func_sqrt(struct ast_node *expr);
 
 struct ast_node *make_func_random(struct ast_node *expr1, struct ast_node *expr2);
 
+// Arithmetic operators
+struct ast_node *make_expr_binop(char operator, struct ast_node *expr1, struct ast_node *expr2);
+
+struct ast_node *make_expr_unop(char operator, struct ast_node *expr);
+
 // Color nodes
 struct ast_node *make_cmd_color(struct ast_node *expr);
 
@@ -161,6 +166,8 @@ void context_create(struct context *self);
 
 //destroy a context
 void context_destroy(struct context *self);
+
+void ast_print_node(const struct ast_node *node, int indent);
 
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);
