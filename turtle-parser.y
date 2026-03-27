@@ -101,11 +101,12 @@ expr:
     VALUE               { $$ = make_expr_value($1); }
   | NAME                { $$ = make_expr_name($1); }
   | expr '+' expr       { $$ = make_expr_binop('+', $1, $3); }
-  | expr '-' expr       { $$ = make_expr_binop('-', $1; $3); }
+  | expr '-' expr       { $$ = make_expr_binop('-', $1, $3); }
   | expr '*' expr       { $$ = make_expr_binop('*', $1, $3); }
   | expr '/' expr       { $$ = make_expr_binop('/', $1, $3); }
   | expr '^' expr       { $$ = make_expr_binop('^', $1, $3); }
   | '-' expr %prec UNOP { $$ = make_expr_unop('-', $2); }
+  | internal_func
 ;
 
 internal_func:
