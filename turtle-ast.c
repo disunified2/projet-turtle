@@ -461,40 +461,40 @@ void context_destroy(struct context *self) {
 void print_ast_node_cmd(const struct ast_node *node) {
     switch (node->u.cmd) {
         case CMD_UP:
-            printf("up ");
+            fprintf(stderr, "up ");
             break;
         case CMD_DOWN:
-            printf("down ");
+            fprintf(stderr, "down ");
             break;
         case CMD_RIGHT:
-            printf("right ");
+            fprintf(stderr, "right ");
             break;
         case CMD_LEFT:
-            printf("left ");
+            fprintf(stderr, "left ");
             break;
         case CMD_HEADING:
-            printf("heading ");
+            fprintf(stderr, "heading ");
             break;
         case CMD_FORWARD:
-            printf("forward ");
+            fprintf(stderr, "forward ");
             break;
         case CMD_BACKWARD:
-            printf("backward ");
+            fprintf(stderr, "backward ");
             break;
         case CMD_POSITION:
-            printf("position ");
+            fprintf(stderr, "position ");
             break;
         case CMD_HOME:
-            printf("home ");
+            fprintf(stderr, "home ");
             break;
         case CMD_COLOR:
-            printf("color ");
+            fprintf(stderr, "color ");
             break;
         case CMD_PRINT:
-            printf("print ");
+            fprintf(stderr, "print ");
             break;
         default:
-            printf("unknown command");
+            fprintf(stderr, "unknown command");
             break;
     }
 }
@@ -502,22 +502,22 @@ void print_ast_node_cmd(const struct ast_node *node) {
 void print_ast_node_func(const struct ast_node *node) {
     switch (node->u.func) {
         case FUNC_COS:
-            printf("cos ");
+            fprintf(stderr, "cos ");
             break;
         case FUNC_SIN:
-            printf("sin ");
+            fprintf(stderr, "sin ");
             break;
         case FUNC_TAN:
-            printf("tan ");
+            fprintf(stderr, "tan ");
             break;
         case FUNC_SQRT:
-            printf("sqrt ");
+            fprintf(stderr, "sqrt ");
             break;
         case FUNC_RANDOM:
-            printf("random ");
+            fprintf(stderr, "random ");
             break;
         default:
-            printf("unknown function ");
+            fprintf(stderr, "unknown function ");
             break;
     }
 }
@@ -526,7 +526,7 @@ void print_ast_node(const struct ast_node *node, int indent) {
     if (node == NULL) { return; }
 
     for (int i = 0; i < indent; i++) {
-        printf("\t");
+        fprintf(stderr, "\t");
     }
 
     switch (node->kind) {
@@ -534,34 +534,34 @@ void print_ast_node(const struct ast_node *node, int indent) {
             print_ast_node_cmd(node);
             break;
         case KIND_CMD_REPEAT:
-            printf("repeat ");
+            fprintf(stderr, "repeat ");
             break;
         case KIND_CMD_BLOCK:
-            printf("{\n");
+            fprintf(stderr, "{\n");
             // indent++;
             break;
         case KIND_CMD_PROC:
-            printf("proc ");
+            fprintf(stderr, "proc ");
             break;
         case KIND_CMD_CALL:
-            printf("call ");
+            fprintf(stderr, "call ");
             break;
         case KIND_CMD_SET:
-            printf("set ");
+            fprintf(stderr, "set ");
             break;
 
         case KIND_EXPR_VALUE:
-            printf("%f ", node->u.value);
+            fprintf(stderr, "%f ", node->u.value);
             break;
         case KIND_EXPR_UNOP:
         case KIND_EXPR_BINOP:
-            printf("%c ", node->u.op);
+            fprintf(stderr, "%c ", node->u.op);
             break;
         case KIND_EXPR_BLOCK:
-            printf("%s {", node->u.name);
+            fprintf(stderr, "%s {", node->u.name);
             break;
         case KIND_EXPR_NAME:
-            printf("%s ", node->u.name);
+            fprintf(stderr, "%s ", node->u.name);
             break;
 
         case KIND_EXPR_FUNC:
@@ -576,11 +576,11 @@ void print_ast_node(const struct ast_node *node, int indent) {
     }
 
     if (node->kind == KIND_CMD_BLOCK) {
-        printf("\n}");
+        fprintf(stderr, "\n}");
     }
 
     if (node->next != NULL) {
-        printf("\n");
+        fprintf(stderr, "\n");
         print_ast_node(node->next, indent);
     }
 }
@@ -592,6 +592,11 @@ void ast_print(const struct ast *self) {
 /* Tree evaluation */
 
 void move_to(struct context *ctx, double x, double y) {
+    if (ctx->up) {
+        printf("MoveTo %f %f\n", x, y);
+    } else {
+        printf("LineTo %f %f\n", x, y);
+    }
     ctx->x = x;
     ctx->y = y;
 }
@@ -660,6 +665,7 @@ void ast_node_eval_cmd_simple(const struct ast_node *node, struct context *ctx) 
             ctx->color[0] = r;
             ctx->color[1] = g;
             ctx->color[2] = b;
+            printf("Color %f %f %f\n", r, g, b);
             break;
         }
         case CMD_PRINT: {
