@@ -256,6 +256,32 @@ struct ast_node *make_func_random(struct ast_node *expr1, struct ast_node *expr2
     return node;
 }
 
+/* Creators for arithmetic operators */
+
+struct ast_node *make_expr_binop(const char operator, struct ast_node *expr1, struct ast_node *expr2) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+
+    node->kind = KIND_EXPR_BINOP;
+    node->u.op = operator;
+    node->children_count = 2;
+    node->children[0] = expr1;
+    node->children[1] = expr2;
+    node->next = NULL;
+
+    return node;
+}
+
+struct ast_node *make_expr_unop(const char operator, struct ast_node *expr) {
+    struct ast_node *node = calloc(1, sizeof(struct ast_node));
+    node->kind = KIND_EXPR_UNOP;
+    node->u.op = operator;
+    node->children_count = 1;
+    node->children[0] = expr;
+    node->next = NULL;
+
+    return node;
+}
+
 /* Creators for colours */
 
 struct ast_node *make_cmd_color(struct ast_node *expr) {
