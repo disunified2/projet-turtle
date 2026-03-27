@@ -26,7 +26,7 @@ struct ast_node *make_expr_value(const double value) {
 struct ast_node *make_expr_name(char* name) {
     struct ast_node *node = calloc(1, sizeof(struct ast_node));
     node->kind = KIND_EXPR_NAME;
-    node->u.name = strdup(name);
+    node->u.name = name;
     node->children_count = 0;
     node->children[0] = NULL;
     node->next = NULL;
@@ -405,7 +405,7 @@ void destroy_ast_node_list(struct ast_node_list *self) {
 //ast_node_list addition
 void ast_node_list_append(struct ast_node_list *self, struct ast_node *node) {
     for (size_t i = 0; i < self->size; i++) {
-        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
+        if ( strcmp(self->nodes[i]->u.name,node->u.name) == 0) {
             self->nodes[i] = node;
             return;
         }
@@ -424,8 +424,8 @@ void ast_node_list_append(struct ast_node_list *self, struct ast_node *node) {
 //ast_node_list obtaining
 struct ast_node *ast_node_list_get(struct ast_node_list *self, struct ast_node *node) {
     for (size_t i = 0; i < self->size; i++) {
-        if ( strcmp(self->nodes[i]->children[0]->u.name,node->children[0]->u.name) == 0) {
-            return self->nodes[i];
+        if ( strcmp(self->nodes[i]->u.name,node->u.name) == 0) {
+            return self->nodes[i]->children[1];
         }
     }
 
