@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #define PI 3.141592653589793
 #define SQRT2 1.41421356237309504880;
@@ -672,8 +673,80 @@ void ast_node_eval_cmd(const struct ast_node *node, struct context *ctx) {
     }
 }
 
-double ast_node_eval_expr(const struct ast_node *node, struct context *ctx) {
+double ast_node_eval_expr_binop(const struct ast_node *node, struct context *ctx) {
+    const double left = ast_node_eval_expr(node->children[0], ctx);
+    const double right = ast_node_eval_expr(node->children[1], ctx);
+    switch (node->u.op) {
+        case '+':
+            return left + right;
+        case '-':
+            return left - right;
+        case '*':
+            return left * right;
+        case '/':
+            if (right != 0) {
+                return left / right;
+            }
+            break;
+        case '^':
+            return pow(left, right);
+        default:
+            break;
+    }
+    return 0;
+}
 
+double ast_node_eval_expr_func(const struct ast_node *node, struct context *ctx) {
+    switch (node->u.func) {
+        case FUNC_COS: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return cos(deg_to_rad(angle));
+        }
+        case FUNC_SIN: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return sin(deg_to_rad(angle));
+        }
+        case FUNC_TAN: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return tan(deg_to_rad(angle));
+        }
+        case FUNC_SQRT: {
+            const double angle = ast_node_eval_expr(node->children[0], ctx);
+            return sqrt(deg_to_rad(angle));
+        }
+        case FUNC_RANDOM: {
+            const double min = ast_node_eval_expr(node->children[0], ctx);
+            const double max = ast_node_eval_expr(node->children[1], ctx);
+            if (min <= max) {
+                return min + (double)rand() / RAND_MAX * (max - min);
+            }
+        }
+    }
+    return 0;
+}
+
+double ast_node_eval_expr(const struct ast_node *node, struct context *ctx) {
+    switch (node->kind) {
+        case KIND_EXPR_VALUE:
+            return node->u.value;
+        case KIND_EXPR_NAME: {
+            // const struct ast_node *var = get_variable(node, ctx);
+            // if (var != NULL) {
+            //     ast_node_eval_expr(var->children[0], ctx);
+            // }
+            break;
+        }
+        case KIND_EXPR_BINOP:
+            return ast_node_eval_expr_binop(node, ctx);
+        case KIND_EXPR_UNOP: {
+            const double val = ast_node_eval_expr(node->children[0], ctx);
+            return -val;
+        }
+        case KIND_EXPR_FUNC:
+            return ast_node_eval_expr_func(node, ctx);
+        default:
+            break;
+    }
     return 0;
 }
 
