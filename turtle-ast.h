@@ -140,6 +140,7 @@ struct context {
   double y;
   double angle;
   bool up;
+  double color[3];
 
   // TODO: add procedure handling
   // TODO: add variable handling
